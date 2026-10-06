@@ -1,13 +1,34 @@
 # Confluent Schema Registry PHP API
 
-[![schema-registry-ci Actions Status](https://github.com/flix-tech/schema-registry-php-client/workflows/schema-registry-ci/badge.svg?branch=master)](https://github.com/flix-tech/schema-registry-php-client/actions)
-[![Maintainability](https://api.codeclimate.com/v1/badges/e62d0c58bb72020eaf3c/maintainability)](https://codeclimate.com/github/flix-tech/schema-registry-php-client/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/e62d0c58bb72020eaf3c/test_coverage)](https://codeclimate.com/github/flix-tech/schema-registry-php-client/test_coverage)
-[![Latest Stable Version](https://poser.pugx.org/flix-tech/confluent-schema-registry-api/v/stable)](https://packagist.org/packages/flix-tech/confluent-schema-registry-api)
-[![Total Downloads](https://poser.pugx.org/flix-tech/confluent-schema-registry-api/downloads)](https://packagist.org/packages/flix-tech/confluent-schema-registry-api)
-[![License](https://poser.pugx.org/flix-tech/confluent-schema-registry-api/license)](https://packagist.org/packages/flix-tech/confluent-schema-registry-api)
+[![CI](https://github.com/dionisiy13/schema-registry-php-client/actions/workflows/checks.yml/badge.svg?branch=master)](https://github.com/dionisiy13/schema-registry-php-client/actions)
+[![Latest Stable Version](https://poser.pugx.org/dionisiy13/confluent-schema-registry-api/v/stable)](https://packagist.org/packages/dionisiy13/confluent-schema-registry-api)
+[![Total Downloads](https://poser.pugx.org/dionisiy13/confluent-schema-registry-api/downloads)](https://packagist.org/packages/dionisiy13/confluent-schema-registry-api)
+[![License](https://poser.pugx.org/dionisiy13/confluent-schema-registry-api/license)](https://packagist.org/packages/dionisiy13/confluent-schema-registry-api)
 
-A PHP 7.4+ library to consume the Confluent Schema Registry REST API. It provides low level functions to create PSR-7
+## About this fork
+
+This package is a **full fork** of the original
+[`flix-tech/confluent-schema-registry-api`](https://github.com/flix-tech/schema-registry-php-client)
+([Packagist](https://packagist.org/packages/flix-tech/confluent-schema-registry-api)), maintained to add
+**PHP 8.5 support**.
+
+- The code and API are the same as the original. Only the changes needed for PHP 8.4/8.5 were made.
+- The `FlixTech\SchemaRegistryApi` namespace is unchanged.
+- `composer.json` declares `replace` for `flix-tech/confluent-schema-registry-api`, so this package is a drop-in
+  replacement: change the package name in your `composer.json` and nothing else.
+- Supported PHP versions: 8.1, 8.2, 8.3, 8.4, 8.5.
+
+Changes compared to the original `8.1.0` release:
+
+- Fixed the implicitly nullable parameter in `CachedRegistry::__construct()` (deprecated since PHP 8.4).
+- Requires `flix-tech/avro-php` `^5.2`, the first release without casts deprecated in PHP 8.5.
+- CI runs on PHP 8.1 – 8.5.
+
+All credit for the library goes to the original authors at FlixTech.
+
+## Original description
+
+A PHP 8.1+ library to consume the Confluent Schema Registry REST API. It provides low level functions to create PSR-7
 compliant requests that can be used as well as high level abstractions to ease developer experience.
 
 #### Contents
@@ -33,10 +54,10 @@ compliant requests that can be used as well as high level abstractions to ease d
 
 | Dependency | Version | Reason |
 |:--- |:---:|:--- |
-| **`php`** | ~7.4 | Anything lower has reached EOL |
+| **`php`** | ^8.1 | Tested on 8.1 – 8.5 |
 | **`guzzlephp/guzzle`** | ~7.0 | Using `Request` to build PSR-7 `RequestInterface` |
 | **`beberlei/assert`** | ~2.7\|~3.0 | The de-facto standard assertions library for PHP |
-| **`flix-tech/avro-php`** | ^4.1 | Maintained fork of the only Avro PHP implementation: `rg/avro-php` |
+| **`flix-tech/avro-php`** | ^5.2 | Maintained fork of the only Avro PHP implementation: `rg/avro-php` |
 
 ### Optional dependencies
 
@@ -51,7 +72,7 @@ compliant requests that can be used as well as high level abstractions to ease d
 This library is installed via [`composer`](http://getcomposer.org).
 
 ```bash
-composer require "flix-tech/confluent-schema-registry-api=^7.4"
+composer require "dionisiy13/confluent-schema-registry-api=^8.2"
 ```
 
 > **NOTE**
@@ -235,24 +256,24 @@ You can set the default variables by copying `variables.mk.dist` to `variables.m
 #### Build the local docker image
 
 ```bash
-PHP_VERSION=7.3 XDEBUG_VERSION=2.9.8 make docker
+PHP_VERSION=8.5 XDEBUG_VERSION=3.5.0 make docker
 ```
 
 #### Unit tests, Coding standards and static analysis
 
 ```bash
-PHP_VERSION=7.3 make ci-local
+PHP_VERSION=8.5 make ci-local
 ```
 
 #### Integration tests
 
-This library uses a `docker-compose` configuration to fire up a schema registry for integration testing, hence
-`docker-compose` from version 1.18.x is required to run those tests.
+This library uses a `docker compose` configuration to fire up a schema registry for integration testing, hence
+Docker Compose v2 is required to run those tests.
 
 ##### The platform can be controlled with the following environment variables
 
 ```
-CONFLUENT_VERSION=latest
+CONFLUENT_VERSION=7.9.1
 CONFLUENT_NETWORK_SUBNET=172.68.0.0/24
 SCHEMA_REGISTRY_IPV4=172.68.0.103
 KAFKA_BROKER_IPV4=172.68.0.102
@@ -262,7 +283,7 @@ ZOOKEEPER_IPV4=172.68.0.101
 ##### Building the confluent platform with a specific version and run the integration tests
 
 ```bash
-CONFLUENT_VERSION=5.2.3 make platform
+CONFLUENT_VERSION=7.9.1 make platform
 make phpunit-integration
 make clean
 ```

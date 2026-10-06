@@ -3,7 +3,7 @@ MAKEFLAGS =+ -rR --warn-undefined-variables
 
 .PHONY: *
 
-CONFLUENT_VERSION ?= latest
+CONFLUENT_VERSION ?= 7.9.1
 CONFLUENT_NETWORK_SUBNET ?= 172.68.0.0/24
 CONFLUENT_NETWORK_GATEWAY ?= 172.68.0.1
 SCHEMA_REGISTRY_IPV4 ?= 172.68.0.103
@@ -51,6 +51,10 @@ cs-fixer-modify:
 phpunit:
 	PHP_VERSION=$(PHP_VERSION) $(PHP) $(XDEBUG_OPTIONS) $(PHPUNIT) --exclude-group integration
 
+phpunit-integration:
+	ENABLE_INTEGRATION_TEST=1 TEST_SCHEMA_REGISTRY_HOST=$(SCHEMA_REGISTRY_IPV4) TEST_SCHEMA_REGISTRY_PORT=8081 \
+	  PHP_VERSION=$(PHP_VERSION) $(PHP) $(XDEBUG_OPTIONS) $(PHPUNIT) --group integration
+
 coverage:
 	mkdir -p build
 	PHP_VERSION=$(PHP_VERSION) $(PHP) -d xdebug.mode=coverage -d xdebug.coverage_enable=1 vendor/bin/phpunit --exclude-group integration \
@@ -70,13 +74,13 @@ install-phars:
 	chmod a+x bin/phpstan.phar
 
 platform:
-	docker-compose down
-	docker-compose up -d
+	docker compose down
+	docker compose up -d
 	bin/wait-for-all.sh
 
 platform-logs:
-	docker-compose logs -f
+	docker compose logs -f
 
 clean:
 	rm -rf build
-	docker-compose down
+	docker compose down
